@@ -2,5 +2,5 @@ Steve 67 CR
 Michael 78 DI
 Diana 92 HD
 Scott 90 HD
-Highest result: Diana 92
-Lowest result: Steve 67
+Highest result: Diana 92 
+Lowesest result: Steve 67 

@@ -8,6 +8,7 @@ using namespace std;
 using namespace studentUtils;
 
 void checkStudentResult(string name, int result,string grade);
+void printResult(ofstream& outFile, string message, string name, int result, string grade);
 
 Student bestStudent;
 Student worstStudent;
@@ -36,16 +37,12 @@ int main() {
     int i =0;
     for (i = 0; i < records; i++) {
         string grade = calculateGrade(result[i]);
-        cout << names[i] << " " << result[i] << " " << grade << "\n";
-        outFile << names[i] << " " << result[i] << " " << grade << "\n";
+        printResult(outFile, "", names[i], result[i], grade);
         checkStudentResult(names[i], result[i], grade);
     }
     
-    outFile << "Highest result: " << bestStudent.getName() << " " << bestStudent.getResult() << "\n";
-    outFile << "Lowest result: " << worstStudent.getName() << " " << worstStudent.getResult() << "\n";
-
-    cout << "Highest result: " << bestStudent.getName() << " " << bestStudent.getResult() << "\n";
-    cout << "Lowest result: " << worstStudent.getName() << " " << worstStudent.getResult() << "\n";
+    printResult(outFile, "Highest result: ", bestStudent.getName(), bestStudent.getResult(), "");
+    printResult(outFile, "Lowesest result: ", worstStudent.getName(), worstStudent.getResult(), "");
 
     outFile.close();
     
@@ -60,4 +57,9 @@ void checkStudentResult(string name, int result,string grade) {
     if (worstStudent.getResult() == -1 || worstStudent.getResult() > result) {
         putNewResult(worstStudent, name, result, grade);
     }
+}
+
+void printResult(ofstream& outFile, string message, string name, int result, string grade) {
+    cout << message << name << " " << result << " " << grade << "\n";
+    outFile << message << name << " " << result << " " << grade << "\n";
 }
