@@ -2,16 +2,15 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include "student.h"
+#include "resources.h"
+#include "studentUtils.h"
 using namespace std;
+using namespace studentUtils;
 
 int countRecords(ifstream& inFile);
-const char* INPUT_FILE_NAME = "studentRecords.txt";
-const char* OUTPUT_FILE_NAME = "results.txt";
+
 void storeRecordsInArray(ifstream& inFile, string names[], int result[]);
-string calculateGrade(int grade);
-void checkIfIsHighestResult(string names, int result,string grade);
-void checkIfIsLowestResult(string names, int result, string grade);
+void checkStudentResult(string name, int result,string grade);
 
 Student bestStudent;
 Student worstStudent;
@@ -33,9 +32,6 @@ int main() {
     int result[records];
     storeRecordsInArray(inFile, names, result);
     inFile.close();
-    // before we check best and worst student, we will initialize it
-    bestStudent.setResult(-999);
-    worstStudent.setResult(999);
 
     // put in file
     ofstream outFile;
@@ -45,9 +41,9 @@ int main() {
         string grade = calculateGrade(result[i]);
         cout << names[i] << " " << result[i] << " " << grade << "\n";
         outFile << names[i] << " " << result[i] << " " << grade << "\n";
-        checkIfIsHighestResult(names[i], result[i], grade);
-        checkIfIsLowestResult(names[i], result[i], grade);
+        checkStudentResult(names[i], result[i], grade);
     }
+    
     outFile << "Highest result: " << bestStudent.getName() << " " << bestStudent.getResult() << "\n";
     outFile << "Lowest result: " << worstStudent.getName() << " " << worstStudent.getResult() << "\n";
 
@@ -60,30 +56,13 @@ int main() {
     return 0;
 }
 
-void checkIfIsHighestResult(string name, int result,string grade) {
-    if (bestStudent.getResult() < result) {
-        bestStudent.setName(name);
-        bestStudent.setResult(result);
-        bestStudent.setGrade(grade);
+void checkStudentResult(string name, int result,string grade) {
+    if (bestStudent.getResult() == -1 || bestStudent.getResult() < result) {
+        putNewResult(bestStudent, name, result, grade);
+    } 
+    if (worstStudent.getResult() == -1 || worstStudent.getResult() > result) {
+        putNewResult(worstStudent, name, result, grade);
     }
-}
-
-void checkIfIsLowestResult(string name, int result,string grade) {
-    if (worstStudent.getResult() > result) {
-        worstStudent.setName(name);
-        worstStudent.setResult(result);
-        worstStudent.setGrade(grade);
-    }
-}
-
-string calculateGrade(int grade) {
-    if (grade >= 90) {
-        return "HD";
-    }
-    if (grade >= 70) {
-        return "DI";
-    }
-    return "CR";
 }
 
 void storeRecordsInArray(ifstream& inFile, string names[], int result[]) {

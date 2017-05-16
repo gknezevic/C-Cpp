@@ -4,6 +4,11 @@ class Student {
     int result;
     std::string grade;
     public:
+
+        Student() {
+            result = -1;
+        }
+
         std::string getName() {
             return name;
         }
