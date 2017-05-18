@@ -1,3 +1,4 @@
+#include <istream>
 #include <iostream>
 #include <fstream>
 #include <thread>
@@ -14,7 +15,7 @@ void generateThreadForConsumingStream();
 int main() {
     cout << "Start application \n";
 
-    //customStream cStream;
+    //istream cStream ;
     //cStream.write("a");
 
     std::thread t1(generateThreadForProducingStream);
@@ -33,5 +34,6 @@ void generateThreadForProducingStream() {
 
 void generateThreadForConsumingStream() {
     std::ifstream inputs ("input.txt", std::ifstream::binary);
-    preprocess(inputs);
+    ProcessorClass processorClass;
+    processorClass.preprocess(inputs);
 }
