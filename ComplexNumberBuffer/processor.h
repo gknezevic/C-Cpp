@@ -1,32 +1,42 @@
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <complex>
+#include "Observer.h"
 using namespace std;
 
-class ProcessorClass {
+class ProcessorClass : public Observer{
 
     int length = 8;
+    istream* stream;
     
 public:
-    float preprocess(ifstream& stream) {
-        int i = 0;
-        while(stream) {
+
+    void startPreprocess(istream& newStream) {
+        this->stream = &newStream;
+        preprocess(*stream);
+    }
+
+    float preprocess(istream& stream) {
+        while(!stream.eof()) {
             cout << "\n Read from Stream \n";
 
             char * buffer = new char [length];
             stream.read(buffer, length);
             processor((std::complex<float>*) &buffer);
-        
-            cout << "\n";
-            if (++i > 10000) {
-                break;
-            }
         }
+        //stream.seekp(0, ios::beg);
+        //stream.seekg(0, ios::beg);
+        //stream.ignore(numeric_limits<streamsize>::max(),'\n');
 
         cout << "\n End Read pointer: " << stream.tellg() << "\n";
     } 
 
     void processor(std::complex<float>* complexNumber) {
         cout << "\n Final Complex number: " << *complexNumber;
+    }
+
+    void Notify() {
+        preprocess(*stream);
     }
 };

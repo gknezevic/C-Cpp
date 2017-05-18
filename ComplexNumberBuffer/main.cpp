@@ -6,21 +6,26 @@
 #include <ios>
 #include "processor.h"
 #include "randomLengthGenerator.h"
-#include "customStream.h"
 using namespace std;
 
-void generateThreadForProducingStream();
-void generateThreadForConsumingStream();
+void generateThreadForProducingStream(ostream& out, ProcessorClass& processorClass);
+void generateThreadForConsumingStream(istream& in, ProcessorClass& processorClass);
+
+const char* OUTPUT_FILE_NAME = "input.txt";
 
 int main() {
     cout << "Start application \n";
+    ProcessorClass processorClass;
 
-    //istream cStream ;
-    //cStream.write("a");
+    filebuf fbuf;
+    fbuf.open(OUTPUT_FILE_NAME, std::ios_base::in | std::ios_base::out);    
 
-    std::thread t1(generateThreadForProducingStream);
+    std::istream in(&fbuf);
+    std::ostream out(&fbuf);
+
+    std::thread t1(generateThreadForProducingStream, std::ref(out), std::ref(processorClass));
     
-    std::thread t2(generateThreadForConsumingStream);
+    std::thread t2(generateThreadForConsumingStream, std::ref(in), std::ref(processorClass));
 
     t1.join();
     t2.join();
@@ -28,12 +33,11 @@ int main() {
     return 0;
 }
 
-void generateThreadForProducingStream() {
-    generateRandomLengthStream();
+void generateThreadForProducingStream(ostream& out, ProcessorClass& processorClass) {
+    RandomLengthGenerator randomLengthGenerator(processorClass);
+    randomLengthGenerator.generateRandomLengthStream(out);
 }
 
-void generateThreadForConsumingStream() {
-    std::ifstream inputs ("input.txt", std::ifstream::binary);
-    ProcessorClass processorClass;
-    processorClass.preprocess(inputs);
+void generateThreadForConsumingStream(istream& in, ProcessorClass& processorClass) {
+    processorClass.startPreprocess(in);
 }
