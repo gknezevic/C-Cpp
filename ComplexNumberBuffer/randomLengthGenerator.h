@@ -28,15 +28,17 @@ public:
         ofstream regularOutFile;
         regularOutFile.open(REGULAR_OUTPUT_FILE_NAME, ios::out);
         int k = 10;
+        srand(time(0));
         for (k ; k > 0; k--) {
             cout << "\n Write from Stream \n";
-                        
+            //usleep(std::rand() % 10);
             input_processor_type z = generateInput();
             
             storeAsRegular(regularOutFile, z);
             outFile.write( (char*)&z, sizeof(input_processor_type));
+            processorClass.Notify(outFile);
         }
-        processorClass.Notify();
+        
     }
 
     void storeAsRegular(ofstream& regularOutFile, input_processor_type z) {
@@ -44,13 +46,12 @@ public:
     }
 
     input_processor_type generateInput() {
-        srand(time(0));
-        int k = std::rand() % 101;
-        int random_real = std::rand();
+        // real and imag are 0 - 100
+        int random_real = std::rand() % 101;
         input_processor_type z;
-        int random_img = std::rand();
-        z.real(k*random_real);
-        z.imag(k*random_img);
+        int random_img = std::rand() % 101;
+        z.real(random_real);
+        z.imag(random_img);
         
         return z;
     }

@@ -31,6 +31,8 @@
         "stdexcept": "cpp",
         "thread": "cpp",
         "tuple": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "mutex": "cpp",
+        "system_error": "cpp"
     }
 }

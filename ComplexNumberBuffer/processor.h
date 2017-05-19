@@ -2,41 +2,47 @@
 #include <iostream>
 #include <fstream>
 #include <complex>
+#include <mutex>
 #include "Observer.h"
 using namespace std;
 
 class ProcessorClass : public Observer{
 
-    int length = 8;
     istream* stream;
+    int position;
     
 public:
 
+    ProcessorClass() : position(0) {}
+
     void startPreprocess(istream& newStream) {
-        this->stream = &newStream;
+        stream = &newStream;
         preprocess(*stream);
     }
 
-    float preprocess(istream& stream) {
-        while(!stream.eof()) {
+    float preprocess(istream &stream) {        
+        //unique_lock<mutex> lock(position);
+        std::complex<float> z;
+        
+        int streamL = stream.tellg();
+        stream.seekg(0, ios::beg);
+        while(position < streamL) {
+            stream.read((char *) &z, sizeof(z));
             cout << "\n Read from Stream \n";
-
-            char * buffer = new char [length];
-            stream.read(buffer, length);
-            processor((std::complex<float>*) &buffer);
+            position += sizeof(z);
+            stream.seekg(position, ios::beg);
+            processor(z);
         }
-        //stream.seekp(0, ios::beg);
-        //stream.seekg(0, ios::beg);
-        //stream.ignore(numeric_limits<streamsize>::max(),'\n');
 
-        cout << "\n End Read pointer: " << stream.tellg() << "\n";
     } 
 
-    void processor(std::complex<float>* complexNumber) {
-        cout << "\n Final Complex number: " << *complexNumber;
+    void processor(std::complex<float>& complexNumber) {
+        cout << "\n Final Complex number: " << complexNumber << "\n";
     }
 
-    void Notify() {
-        preprocess(*stream);
+    void Notify(ostream& outFile) {
+        cout << "\n Debug " << "\n";
+        std::istream in(outFile.rdbuf());
+        preprocess(in);
     }
 };
